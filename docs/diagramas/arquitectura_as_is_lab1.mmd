@@ -1,0 +1,32 @@
+flowchart TB
+ subgraph Cliente["Acceso De usuarios"]
+        User["Cliente Móvil Apliacion"]
+  end
+ subgraph FastAPI["Framework: FastAPI"]
+    direction TB
+        EP1["/evaluar-riesgo (POST)<br>Recibe: edad, ingresos, deudas<br>Estado: Protegido (datos válidos)"]
+        EP2["/status (GET)<br>Devuelve: Estado de salud<br>Estado: Público (Sin autenticación)"]
+        EP3["/datos-financieros/{id} (GET)<br>Devuelve: Historial por ID<br>Estado: VULNERABLE (Sin autenticación)"]
+  end
+ subgraph Codespaces["GitHub Codespaces"]
+        FastAPI
+  end
+ subgraph Azure["Nube de Azure"]
+        Codespaces
+  end
+    User -- Request HTTP / HTTPS --> Internet(("Internet"))
+    Internet -- Encamina Peticiones --> EP1 & EP2 & EP3
+    EP1 -. Respuesta JSON<br>Aprobado / Rechazado / En Revisión .-> User
+    EP2 -. Respuesta JSON .-> User
+    EP3 -. Respuesta JSON .-> User
+
+     User:::usuario
+     EP1:::endpoint
+     EP2:::endpoint
+     EP3:::endpoint
+    classDef default fill:#f9f9f9,stroke:#333,stroke-width:2px
+    classDef usuario fill:#e1f5fe,stroke:#0288d1,stroke-width:2px
+    classDef nube fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef api fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    classDef endpoint fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    style Codespaces stroke-dasharray: 5 5
