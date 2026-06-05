@@ -1,0 +1,43 @@
+graph TD
+    %% Definición de Estilos y Clases
+    classDef cliente fill:#e1f5fe,stroke:#039be5,stroke-width:2px,color:#01579b;
+    classDef entorno fill:#fafafa,stroke:#757575,stroke-width:2px,stroke-dasharray: 5 5;
+    classDef componente fill:#e8f5e9,stroke:#4caf50,stroke-width:2px,color:#1b5e20;
+    classDef puerto fill:#fff3e0,stroke:#ff9800,stroke-width:2px,color:#e65100;
+
+    %% Nodos fuera de la infraestructura de ejecución
+    Usuario["Navegador Web <br> (Cliente / Swagger UI)"]:::cliente
+    
+    %% Frontera del Entorno de Nube Efímero
+    subgraph Codespaces ["Entorno de Desarrollo: GitHub Codespaces"]
+        direction LR
+        
+        Puerto8000["Puerto Público 8000 <br> (Endpoint HTTPS)"]:::puerto
+        
+        subgraph Servidor ["Servidor de Aplicación"]
+            Uvicorn["Servidor ASGI <br> (Uvicorn)"]:::componente
+            FastAPI["Aplicación Web <br> (FastAPI - main:app)"]:::componente
+        end
+    end
+
+    %% Base de datos o lógica interna expuesta (Endpoints detectados)
+    subgraph Endpoints ["Rutas de la API"]
+        RutaRaiz["GET / <br> (Read Root)"]:::componente
+        RutaStatus["GET /status <br> (Health Check)"]:::componente
+        RutaSensible["GET /datos-sensibles/{usuario} <br> (Datos Privados)"]:::componente
+    end
+
+    %% Relaciones y Flujo de Datos
+ %% Relaciones y Flujo de Datos
+Usuario -->|1. Petición HTTPS| Puerto8000
+Puerto8000 -->|2. Redirección de Tráfico| Uvicorn
+Uvicorn -->|3. Enrutamiento ASGI| FastAPI
+
+FastAPI --> RutaRaiz
+FastAPI --> RutaStatus
+FastAPI --> RutaSensible
+
+%% Flujo de respuesta de vuelta al usuario
+RutaRaiz -.->|4. Respuesta JSON| Usuario
+RutaStatus -.->|4. Respuesta JSON| Usuario
+RutaSensible -.->|4. Respuesta JSON| Usuario
