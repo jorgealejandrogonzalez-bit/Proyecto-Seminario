@@ -1,4 +1,4 @@
-name: CI/CD Pipeline - FinTech Nova
+name: CI-CD Pipeline
 
 on:
   push:
@@ -9,10 +9,10 @@ jobs:
   build-and-security:
     runs-on: ubuntu-latest
     steps:
-      - name: Descargar codigo (Checkout)
+      - name: Descargar codigo
         uses: actions/checkout@v4
 
-      - name: Configurar Python 3.11
+      - name: Configurar Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
@@ -21,7 +21,7 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Auditoria de Seguridad (pip-audit)
+      - name: Auditoria de Seguridad
         uses: pypa/pip-audit-action@v3.5.0
         with:
           inputs: requirements.txt
